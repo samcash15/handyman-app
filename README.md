@@ -148,5 +148,3 @@ Track all your projects with visual status indicators and smart filtering.
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 ---
-
-**Built with ❤️ for handyman professionals who deserve better business management tools.**
