@@ -1,0 +1,26 @@
+<mat-toolbar color="primary" class="app-toolbar">
+  <mat-icon>build</mat-icon>
+  <span>{{ title() }}</span>
+</mat-toolbar>
+
+<div class="app-content">
+  <mat-tab-group class="main-tabs">
+    <mat-tab label="Clients">
+      <div class="tab-content">
+        <app-client-list></app-client-list>
+      </div>
+    </mat-tab>
+    
+    <mat-tab label="Projects">
+      <div class="tab-content">
+        <app-project-list></app-project-list>
+      </div>
+    </mat-tab>
+    
+    <mat-tab label="Schedule">
+      <div class="tab-content">
+        <app-schedule-view></app-schedule-view>
+      </div>
+    </mat-tab>
+  </mat-tab-group>
+</div>

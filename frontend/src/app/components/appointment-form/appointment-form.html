@@ -1,0 +1,106 @@
+<h2 mat-dialog-title>{{ title }}</h2>
+
+<form [formGroup]="appointmentForm" (ngSubmit)="onSubmit()">
+  <mat-dialog-content>
+    <div class="form-container">
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Client *</mat-label>
+        <mat-select formControlName="clientId" (selectionChange)="onClientChange()">
+          <mat-option *ngFor="let client of clients" [value]="client.id">
+            {{ client.name }}
+          </mat-option>
+        </mat-select>
+        <mat-error *ngIf="appointmentForm.get('clientId')?.invalid && appointmentForm.get('clientId')?.touched">
+          {{ getErrorMessage('clientId') }}
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Project (Optional)</mat-label>
+        <mat-select formControlName="projectId">
+          <mat-option value="">No Project</mat-option>
+          <mat-option *ngFor="let project of projects" [value]="project.id">
+            {{ project.name }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Date *</mat-label>
+        <input matInput [matDatepicker]="datePicker" formControlName="appointmentDate">
+        <mat-datepicker-toggle matIconSuffix [for]="datePicker"></mat-datepicker-toggle>
+        <mat-datepicker #datePicker></mat-datepicker>
+        <mat-error *ngIf="appointmentForm.get('appointmentDate')?.invalid && appointmentForm.get('appointmentDate')?.touched">
+          {{ getErrorMessage('appointmentDate') }}
+        </mat-error>
+      </mat-form-field>
+
+      <div class="form-row">
+        <mat-form-field appearance="outline" class="half-width">
+          <mat-label>Start Time *</mat-label>
+          <input matInput formControlName="startTime" type="time" placeholder="09:00">
+          <mat-error *ngIf="appointmentForm.get('startTime')?.invalid && appointmentForm.get('startTime')?.touched">
+            {{ getErrorMessage('startTime') }}
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="half-width">
+          <mat-label>End Time *</mat-label>
+          <input matInput formControlName="endTime" type="time" placeholder="10:00">
+          <mat-error *ngIf="appointmentForm.get('endTime')?.invalid && appointmentForm.get('endTime')?.touched">
+            {{ getErrorMessage('endTime') }}
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Status</mat-label>
+        <mat-select formControlName="status">
+          <mat-option *ngFor="let status of statuses" [value]="status">
+            {{ statusLabels[status] }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <div class="location-section">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Location</mat-label>
+          <input matInput formControlName="location" placeholder="Enter location or select from options below">
+          <mat-icon matSuffix>location_on</mat-icon>
+        </mat-form-field>
+        
+        <div class="location-options" *ngIf="selectedClient">
+          <p class="options-label">Quick Options:</p>
+          <div class="option-buttons">
+            <button type="button" mat-stroked-button 
+                    *ngIf="selectedClient.address" 
+                    (click)="useClientAddress()">
+              <mat-icon>home</mat-icon>
+              Use Client Address
+            </button>
+            <button type="button" mat-stroked-button (click)="clearLocation()">
+              <mat-icon>clear</mat-icon>
+              Clear
+            </button>
+          </div>
+          <div class="client-address" *ngIf="selectedClient.address">
+            <mat-icon>info</mat-icon>
+            <span>{{ selectedClient.name }}: {{ selectedClient.address }}</span>
+          </div>
+        </div>
+      </div>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Notes</mat-label>
+        <textarea matInput formControlName="notes" placeholder="Special instructions or notes" rows="3"></textarea>
+      </mat-form-field>
+    </div>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end">
+    <button mat-button type="button" (click)="onCancel()">Cancel</button>
+    <button mat-raised-button color="primary" type="submit" [disabled]="appointmentForm.invalid">
+      {{ isEditMode ? 'Update' : 'Schedule' }}
+    </button>
+  </mat-dialog-actions>
+</form>

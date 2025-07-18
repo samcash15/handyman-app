@@ -1,0 +1,99 @@
+<h2 mat-dialog-title>{{ title }}</h2>
+
+<form [formGroup]="clientForm" (ngSubmit)="onSubmit()">
+  <mat-dialog-content>
+    <div class="form-container">
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Name *</mat-label>
+        <input matInput formControlName="name" placeholder="Enter client name">
+        <mat-error *ngIf="clientForm.get('name')?.invalid && clientForm.get('name')?.touched">
+          {{ getErrorMessage('name') }}
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Email</mat-label>
+        <input matInput formControlName="email" placeholder="Enter email address" type="email">
+        <mat-error *ngIf="clientForm.get('email')?.invalid && clientForm.get('email')?.touched">
+          {{ getErrorMessage('email') }}
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Phone</mat-label>
+        <input matInput formControlName="phone" placeholder="Enter phone number" type="tel">
+        <mat-error *ngIf="clientForm.get('phone')?.invalid && clientForm.get('phone')?.touched">
+          {{ getErrorMessage('phone') }}
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Address</mat-label>
+        <textarea matInput formControlName="address" placeholder="Enter address" rows="3"></textarea>
+        <mat-error *ngIf="clientForm.get('address')?.invalid && clientForm.get('address')?.touched">
+          {{ getErrorMessage('address') }}
+        </mat-error>
+      </mat-form-field>
+
+      <!-- Project Creation Section -->
+      <div *ngIf="!isEditMode" class="project-section">
+        <mat-divider></mat-divider>
+        <div class="section-header">
+          <mat-checkbox [(ngModel)]="createProject" (change)="onCreateProjectChange()" [ngModelOptions]="{standalone: true}">
+            <mat-icon>work</mat-icon>
+            Also create a project for this client
+          </mat-checkbox>
+        </div>
+        
+        <div *ngIf="createProject" [formGroup]="projectForm" class="project-form">
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Project Name *</mat-label>
+            <input matInput formControlName="name" placeholder="Enter project name">
+            <mat-error *ngIf="projectForm.get('name')?.invalid && projectForm.get('name')?.touched">
+              Project name is required
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Description</mat-label>
+            <textarea matInput formControlName="description" placeholder="Enter project description" rows="2"></textarea>
+          </mat-form-field>
+
+          <div class="form-row">
+            <mat-form-field appearance="outline" class="half-width">
+              <mat-label>Status</mat-label>
+              <mat-select formControlName="status">
+                <mat-option *ngFor="let status of statuses" [value]="status">
+                  {{ statusLabels[status] }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+
+          <div class="form-row">
+            <mat-form-field appearance="outline" class="half-width">
+              <mat-label>Start Date</mat-label>
+              <input matInput [matDatepicker]="startPicker" formControlName="startDate">
+              <mat-datepicker-toggle matSuffix [for]="startPicker"></mat-datepicker-toggle>
+              <mat-datepicker #startPicker></mat-datepicker>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="half-width">
+              <mat-label>End Date</mat-label>
+              <input matInput [matDatepicker]="endPicker" formControlName="endDate">
+              <mat-datepicker-toggle matSuffix [for]="endPicker"></mat-datepicker-toggle>
+              <mat-datepicker #endPicker></mat-datepicker>
+            </mat-form-field>
+          </div>
+        </div>
+      </div>
+    </div>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end">
+    <button mat-button type="button" (click)="onCancel()">Cancel</button>
+    <button mat-raised-button color="primary" type="submit" [disabled]="clientForm.invalid || (createProject && projectForm.invalid)">
+      {{ isEditMode ? 'Update Client' : (createProject ? 'Create Client & Project' : 'Create Client') }}
+    </button>
+  </mat-dialog-actions>
+</form>

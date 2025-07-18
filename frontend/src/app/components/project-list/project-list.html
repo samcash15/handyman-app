@@ -1,0 +1,90 @@
+<div class="project-list-container">
+  <div class="header">
+    <h2>Projects</h2>
+    <button mat-raised-button color="primary" (click)="openProjectForm()">
+      <mat-icon>add</mat-icon>
+      Add Project
+    </button>
+  </div>
+
+  <div class="filters">
+    <mat-form-field appearance="outline" class="search-field">
+      <mat-label>Search projects</mat-label>
+      <input matInput [(ngModel)]="searchTerm" (input)="onSearch()" placeholder="Search by name, client, or description">
+      <mat-icon matSuffix>search</mat-icon>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="status-filter">
+      <mat-label>Filter by status</mat-label>
+      <mat-select [(value)]="selectedStatus" (selectionChange)="onStatusChange()">
+        <mat-option value="">All Statuses</mat-option>
+        <mat-option *ngFor="let status of statuses" [value]="status">
+          {{ statusLabels[status] }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+
+  <div class="projects-grid" *ngIf="!loading">
+    <mat-card *ngFor="let project of filteredProjects" class="project-card">
+      <mat-card-header>
+        <mat-card-title>{{ project.name }}</mat-card-title>
+        <mat-card-subtitle>{{ project.clientName }}</mat-card-subtitle>
+      </mat-card-header>
+      
+      <mat-card-content>
+        <div class="project-info">
+          <div class="info-row">
+            <mat-chip-set>
+              <mat-chip [color]="getStatusColor(project.status)">
+                {{ statusLabels[project.status] }}
+              </mat-chip>
+            </mat-chip-set>
+          </div>
+          
+          <div class="info-item" *ngIf="project.description">
+            <mat-icon>description</mat-icon>
+            <span>{{ project.description }}</span>
+          </div>
+          
+          <div class="dates" *ngIf="project.startDate || project.endDate">
+            <div class="info-item" *ngIf="project.startDate">
+              <mat-icon>event</mat-icon>
+              <span>Start: {{ formatDate(project.startDate) }}</span>
+            </div>
+            <div class="info-item" *ngIf="project.endDate">
+              <mat-icon>event_available</mat-icon>
+              <span>End: {{ formatDate(project.endDate) }}</span>
+            </div>
+          </div>
+        </div>
+      </mat-card-content>
+      
+      <mat-card-actions>
+        <div class="action-buttons">
+          <button mat-button (click)="openProjectForm(project)">
+            <mat-icon>edit</mat-icon>
+            Edit
+          </button>
+          <button mat-button color="accent" (click)="scheduleAppointment(project)">
+            <mat-icon>schedule</mat-icon>
+            Schedule
+          </button>
+          <button mat-button color="warn" (click)="deleteProject(project)">
+            <mat-icon>delete</mat-icon>
+            Delete
+          </button>
+        </div>
+      </mat-card-actions>
+    </mat-card>
+  </div>
+
+  <div class="loading" *ngIf="loading">
+    <p>Loading projects...</p>
+  </div>
+
+  <div class="no-projects" *ngIf="!loading && filteredProjects.length === 0">
+    <p *ngIf="searchTerm || selectedStatus">No projects found matching your filters.</p>
+    <p *ngIf="!searchTerm && !selectedStatus">No projects found. Create your first project!</p>
+  </div>
+</div>

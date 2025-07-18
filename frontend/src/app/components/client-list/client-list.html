@@ -1,0 +1,68 @@
+<div class="client-list-container">
+  <div class="header">
+    <h2>Clients</h2>
+    <button mat-raised-button color="primary" (click)="openClientForm()">
+      <mat-icon>add</mat-icon>
+      Add Client
+    </button>
+  </div>
+
+  <div class="search-container">
+    <mat-form-field appearance="outline" class="search-field">
+      <mat-label>Search clients</mat-label>
+      <input matInput [(ngModel)]="searchTerm" (input)="onSearch()" placeholder="Search by name, email, or phone">
+      <mat-icon matSuffix>search</mat-icon>
+    </mat-form-field>
+  </div>
+
+  <div class="clients-grid" *ngIf="!loading">
+    <mat-card *ngFor="let client of filteredClients" class="client-card">
+      <mat-card-header>
+        <mat-card-title>{{ client.name }}</mat-card-title>
+      </mat-card-header>
+      
+      <mat-card-content>
+        <div class="client-info">
+          <div class="info-item" *ngIf="client.email">
+            <mat-icon>email</mat-icon>
+            <span>{{ client.email }}</span>
+          </div>
+          <div class="info-item" *ngIf="client.phone">
+            <mat-icon>phone</mat-icon>
+            <span>{{ client.phone }}</span>
+          </div>
+          <div class="info-item" *ngIf="client.address">
+            <mat-icon>location_on</mat-icon>
+            <span>{{ client.address }}</span>
+          </div>
+        </div>
+      </mat-card-content>
+      
+      <mat-card-actions>
+        <div class="action-buttons">
+          <button mat-button (click)="openClientForm(client)">
+            <mat-icon>edit</mat-icon>
+            Edit
+          </button>
+          <button mat-button color="accent" (click)="createProjectForClient(client)">
+            <mat-icon>work</mat-icon>
+            New Project
+          </button>
+          <button mat-button color="warn" (click)="deleteClient(client)">
+            <mat-icon>delete</mat-icon>
+            Delete
+          </button>
+        </div>
+      </mat-card-actions>
+    </mat-card>
+  </div>
+
+  <div class="loading" *ngIf="loading">
+    <p>Loading clients...</p>
+  </div>
+
+  <div class="no-clients" *ngIf="!loading && filteredClients.length === 0">
+    <p *ngIf="searchTerm">No clients found matching "{{ searchTerm }}"</p>
+    <p *ngIf="!searchTerm">No clients found. Add your first client!</p>
+  </div>
+</div>

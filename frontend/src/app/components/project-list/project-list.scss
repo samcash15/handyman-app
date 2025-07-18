@@ -1,0 +1,166 @@
+.project-list-container {
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+
+  h2 {
+    margin: 0;
+    color: var(--mat-sys-on-surface);
+  }
+
+  button {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+}
+
+.filters {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 20px;
+
+  .search-field {
+    flex: 1;
+    max-width: 400px;
+  }
+
+  .status-filter {
+    min-width: 180px;
+  }
+}
+
+.projects-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 20px;
+}
+
+.project-card {
+  transition: transform 0.2s ease-in-out;
+  
+  &:hover {
+    transform: translateY(-2px);
+  }
+}
+
+.project-info {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+
+.info-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 14px;
+  color: var(--mat-sys-on-surface-variant);
+  
+  mat-icon {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+    margin-top: 2px;
+  }
+  
+  span {
+    line-height: 1.4;
+  }
+}
+
+.dates {
+  display: flex;
+  gap: 16px;
+  
+  .info-item {
+    flex: 1;
+  }
+}
+
+mat-card-actions {
+  display: flex;
+  justify-content: flex-end;
+  
+  .action-buttons {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    
+    button {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      
+      mat-icon {
+        font-size: 16px;
+        width: 16px;
+        height: 16px;
+      }
+    }
+  }
+}
+
+.loading, .no-projects {
+  text-align: center;
+  padding: 40px;
+  color: var(--mat-sys-on-surface-variant);
+}
+
+@media (max-width: 768px) {
+  .project-list-container {
+    padding: 10px;
+  }
+  
+  .header {
+    flex-direction: column;
+    gap: 10px;
+    align-items: stretch;
+    
+    button {
+      justify-content: center;
+    }
+  }
+  
+  .filters {
+    flex-direction: column;
+    gap: 10px;
+    
+    .search-field {
+      max-width: 100%;
+    }
+  }
+  
+  .projects-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .dates {
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  .action-buttons {
+    flex-direction: column;
+    gap: 4px;
+    
+    button {
+      justify-content: center;
+    }
+  }
+}

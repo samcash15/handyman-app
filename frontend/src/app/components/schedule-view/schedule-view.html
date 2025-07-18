@@ -1,0 +1,283 @@
+<div class="schedule-container">
+  <div class="header">
+    <h2>Schedule</h2>
+    <button mat-raised-button color="primary" (click)="openAppointmentForm()">
+      <mat-icon>add</mat-icon>
+      New Appointment
+    </button>
+  </div>
+
+  <mat-tab-group class="schedule-tabs">
+    <!-- Today's Schedule -->
+    <mat-tab label="Today">
+      <div class="tab-content">
+        <div class="section-header">
+          <h3>Today's Schedule</h3>
+          <mat-chip-set>
+            <mat-chip color="primary">{{ todaysAppointments.length }} appointments</mat-chip>
+          </mat-chip-set>
+        </div>
+        
+        <div class="appointments-list" *ngIf="!loading">
+          <mat-card *ngFor="let appointment of todaysAppointments" class="appointment-card today">
+            <mat-card-header>
+              <mat-card-title>
+                <div class="appointment-time">
+                  <mat-icon>schedule</mat-icon>
+                  {{ formatTime(appointment.startTime) }} - {{ formatTime(appointment.endTime) }}
+                </div>
+              </mat-card-title>
+              <mat-card-subtitle>{{ appointment.clientName }}</mat-card-subtitle>
+            </mat-card-header>
+            
+            <mat-card-content>
+              <div class="appointment-details">
+                <mat-chip-set>
+                  <mat-chip [color]="getStatusColor(appointment.status)">
+                    {{ statusLabels[appointment.status] }}
+                  </mat-chip>
+                </mat-chip-set>
+                
+                <div class="detail-item" *ngIf="appointment.projectName">
+                  <mat-icon>work</mat-icon>
+                  <span>{{ appointment.projectName }}</span>
+                </div>
+                
+                <div class="detail-item" *ngIf="appointment.location">
+                  <mat-icon>location_on</mat-icon>
+                  <span>{{ appointment.location }}</span>
+                </div>
+                
+                <div class="detail-item notes" *ngIf="appointment.notes">
+                  <mat-icon>note</mat-icon>
+                  <span>{{ appointment.notes }}</span>
+                </div>
+              </div>
+            </mat-card-content>
+            
+            <mat-card-actions>
+              <button mat-button (click)="openAppointmentForm(appointment)">
+                <mat-icon>edit</mat-icon>
+                Edit
+              </button>
+              <button mat-button *ngIf="appointment.status === 'SCHEDULED'" (click)="markAsCompleted(appointment)">
+                <mat-icon>check_circle</mat-icon>
+                Complete
+              </button>
+              <button mat-button color="warn" (click)="deleteAppointment(appointment)">
+                <mat-icon>delete</mat-icon>
+                Delete
+              </button>
+            </mat-card-actions>
+          </mat-card>
+          
+          <div class="no-appointments" *ngIf="todaysAppointments.length === 0">
+            <mat-icon>event_available</mat-icon>
+            <h3>No appointments scheduled for today</h3>
+            <p>Your schedule is clear!</p>
+          </div>
+        </div>
+      </div>
+    </mat-tab>
+
+    <!-- Week View -->
+    <mat-tab label="Week View">
+      <div class="tab-content">
+        <div class="week-view-container">
+          <div class="week-header">
+            <button mat-icon-button (click)="previousWeek()">
+              <mat-icon>chevron_left</mat-icon>
+            </button>
+            <h3>{{ getWeekRange() }}</h3>
+            <button mat-icon-button (click)="nextWeek()">
+              <mat-icon>chevron_right</mat-icon>
+            </button>
+          </div>
+          
+          <div class="week-grid">
+            <div class="week-days">
+              <div class="day-column" *ngFor="let day of weekDays">
+                <div class="day-header" [class.today]="isToday(day.date.toISOString())">
+                  <div class="day-name">{{ day.name }}</div>
+                  <div class="day-date">{{ day.date.getDate() }}</div>
+                </div>
+                
+                <div class="day-appointments">
+                  <div class="appointment-slot" 
+                       *ngFor="let appointment of getAppointmentsForDay(day.date)"
+                       [class]="getAppointmentClass(appointment)"
+                       (click)="openAppointmentForm(appointment)">
+                    <div class="appointment-time">{{ formatTime(appointment.startTime) }}</div>
+                    <div class="appointment-client">{{ appointment.clientName }}</div>
+                    <div class="appointment-project" *ngIf="appointment.projectName">{{ appointment.projectName }}</div>
+                    <div class="appointment-location" *ngIf="appointment.location">
+                      <mat-icon>location_on</mat-icon>
+                      <span>{{ appointment.location }}</span>
+                    </div>
+                  </div>
+                  
+                  <div class="no-appointments day-no-appointments" *ngIf="getAppointmentsForDay(day.date).length === 0">
+                    <button mat-stroked-button (click)="scheduleForDay(day.date)" class="add-appointment-btn">
+                      <mat-icon>add</mat-icon>
+                      Add
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </mat-tab>
+
+    <!-- Date Picker View -->
+    <mat-tab label="By Date">
+      <div class="tab-content">
+        <div class="date-picker-section">
+          <mat-form-field appearance="outline">
+            <mat-label>Select Date</mat-label>
+            <input matInput [matDatepicker]="datePicker" [(ngModel)]="selectedDate" (dateChange)="onDateChange()">
+            <mat-datepicker-toggle matIconSuffix [for]="datePicker"></mat-datepicker-toggle>
+            <mat-datepicker #datePicker></mat-datepicker>
+          </mat-form-field>
+          
+          <button mat-raised-button color="primary" (click)="scheduleForSelectedDate()">
+            <mat-icon>add</mat-icon>
+            Schedule for {{ formatDate(selectedDate.toISOString()) }}
+          </button>
+        </div>
+        
+        <div class="appointments-list">
+          <mat-card *ngFor="let appointment of selectedDateAppointments" class="appointment-card">
+            <mat-card-header>
+              <mat-card-title>
+                <div class="appointment-time">
+                  <mat-icon>schedule</mat-icon>
+                  {{ formatTime(appointment.startTime) }} - {{ formatTime(appointment.endTime) }}
+                </div>
+              </mat-card-title>
+              <mat-card-subtitle>{{ appointment.clientName }}</mat-card-subtitle>
+            </mat-card-header>
+            
+            <mat-card-content>
+              <div class="appointment-details">
+                <mat-chip-set>
+                  <mat-chip [color]="getStatusColor(appointment.status)">
+                    {{ statusLabels[appointment.status] }}
+                  </mat-chip>
+                </mat-chip-set>
+                
+                <div class="detail-item" *ngIf="appointment.projectName">
+                  <mat-icon>work</mat-icon>
+                  <span>{{ appointment.projectName }}</span>
+                </div>
+                
+                <div class="detail-item" *ngIf="appointment.location">
+                  <mat-icon>location_on</mat-icon>
+                  <span>{{ appointment.location }}</span>
+                </div>
+                
+                <div class="detail-item notes" *ngIf="appointment.notes">
+                  <mat-icon>note</mat-icon>
+                  <span>{{ appointment.notes }}</span>
+                </div>
+              </div>
+            </mat-card-content>
+            
+            <mat-card-actions>
+              <button mat-button (click)="openAppointmentForm(appointment)">
+                <mat-icon>edit</mat-icon>
+                Edit
+              </button>
+              <button mat-button *ngIf="appointment.status === 'SCHEDULED'" (click)="markAsCompleted(appointment)">
+                <mat-icon>check_circle</mat-icon>
+                Complete
+              </button>
+              <button mat-button color="warn" (click)="deleteAppointment(appointment)">
+                <mat-icon>delete</mat-icon>
+                Delete
+              </button>
+            </mat-card-actions>
+          </mat-card>
+          
+          <div class="no-appointments" *ngIf="selectedDateAppointments.length === 0">
+            <mat-icon>event_available</mat-icon>
+            <h3>No appointments scheduled for {{ formatDate(selectedDate.toISOString()) }}</h3>
+            <button mat-raised-button color="primary" (click)="scheduleForSelectedDate()">
+              <mat-icon>add</mat-icon>
+              Schedule Appointment
+            </button>
+          </div>
+        </div>
+      </div>
+    </mat-tab>
+
+    <!-- Upcoming Appointments -->
+    <mat-tab label="Upcoming">
+      <div class="tab-content">
+        <div class="section-header">
+          <h3>Upcoming Appointments</h3>
+        </div>
+        
+        <div class="appointments-list">
+          <mat-card *ngFor="let appointment of upcomingAppointments" class="appointment-card" [class.today]="isToday(appointment.appointmentDate)">
+            <mat-card-header>
+              <mat-card-title>
+                <div class="appointment-time">
+                  <mat-icon>schedule</mat-icon>
+                  {{ formatDate(appointment.appointmentDate) }} at {{ formatTime(appointment.startTime) }}
+                </div>
+              </mat-card-title>
+              <mat-card-subtitle>{{ appointment.clientName }}</mat-card-subtitle>
+            </mat-card-header>
+            
+            <mat-card-content>
+              <div class="appointment-details">
+                <mat-chip-set>
+                  <mat-chip [color]="getStatusColor(appointment.status)">
+                    {{ statusLabels[appointment.status] }}
+                  </mat-chip>
+                </mat-chip-set>
+                
+                <div class="detail-item" *ngIf="appointment.projectName">
+                  <mat-icon>work</mat-icon>
+                  <span>{{ appointment.projectName }}</span>
+                </div>
+                
+                <div class="detail-item" *ngIf="appointment.location">
+                  <mat-icon>location_on</mat-icon>
+                  <span>{{ appointment.location }}</span>
+                </div>
+                
+                <div class="detail-item notes" *ngIf="appointment.notes">
+                  <mat-icon>note</mat-icon>
+                  <span>{{ appointment.notes }}</span>
+                </div>
+              </div>
+            </mat-card-content>
+            
+            <mat-card-actions>
+              <button mat-button (click)="openAppointmentForm(appointment)">
+                <mat-icon>edit</mat-icon>
+                Edit
+              </button>
+              <button mat-button color="warn" (click)="deleteAppointment(appointment)">
+                <mat-icon>delete</mat-icon>
+                Delete
+              </button>
+            </mat-card-actions>
+          </mat-card>
+          
+          <div class="no-appointments" *ngIf="upcomingAppointments.length === 0">
+            <mat-icon>event_available</mat-icon>
+            <h3>No upcoming appointments</h3>
+            <button mat-raised-button color="primary" (click)="openAppointmentForm()">
+              <mat-icon>add</mat-icon>
+              Schedule First Appointment
+            </button>
+          </div>
+        </div>
+      </div>
+    </mat-tab>
+  </mat-tab-group>
+</div>
