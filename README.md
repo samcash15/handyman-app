@@ -126,12 +126,15 @@ A comprehensive business management application designed specifically for handym
 
 ### Week View
 Beautiful 7-day calendar layout with color-coded appointments and easy navigation.
+![Week View](screenshots/Schedule Week Page.png)
 
 ### Client Management
 Clean interface for managing client information with quick action buttons.
+![Client Management](screenshots/client page.png)
 
 ### Project Dashboard
 Track all your projects with visual status indicators and smart filtering.
+![Project Dashboard](screenshots/projects page.png)
 
 ## 🤝 Contributing
 
