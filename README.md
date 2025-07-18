@@ -133,15 +133,6 @@ Clean interface for managing client information with quick action buttons.
 ### Project Dashboard
 Track all your projects with visual status indicators and smart filtering.
 
-## 🔮 Future Enhancements
-
-- **Photo Documentation** - Add photos to projects and appointments
-- **Invoicing System** - Generate and send invoices to clients
-- **Expense Tracking** - Track materials and labor costs
-- **Time Tracking** - Automatic time logging for appointments
-- **Reporting** - Business insights and performance metrics
-- **Mobile App** - Native iOS and Android applications
-
 ## 🤝 Contributing
 
 1. Fork the repository
@@ -153,18 +144,6 @@ Track all your projects with visual status indicators and smart filtering.
 ## 📄 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## 🙏 Acknowledgments
-
-- **Angular Team** - For the excellent framework
-- **Spring Boot Team** - For the robust backend framework
-- **Material Design** - For the beautiful UI components
-- **OpenAPI** - For API documentation standards
-
-## 📞 Support
-
-For support, email your-email@example.com or create an issue in the GitHub repository.
-
 ---
 
 **Built with ❤️ for handyman professionals who deserve better business management tools.**
